@@ -1,0 +1,23 @@
+object dmConexao: TdmConexao
+  OldCreateOrder = False
+  Height = 232
+  Width = 335
+  object conexao: TFDConnection
+    Params.Strings = (
+      'Database=vendas'
+      'User_Name=root'
+      'Password=1234'
+      'CharacterSet=utf8'
+      'DriverID=MySQL'
+      'Server=localhost')
+    Connected = True
+    LoginPrompt = False
+    Left = 48
+    Top = 32
+  end
+  object q: TFDQuery
+    Connection = conexao
+    Left = 56
+    Top = 96
+  end
+end

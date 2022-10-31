@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2022/10/29 11:17:50.000.861,=C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2022/10/29 11:21:28.000.214,=C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2022/10/29 12:46:59.000.053,=C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2022/10/29 12:47:36.000.295,C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Unit1.dfm=C:\projeto\uPrincipal.dfm</Transaction>
+    <Transaction>2022/10/29 12:47:36.000.295,C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\projeto\uPrincipal.pas</Transaction>
+    <Transaction>2022/10/29 12:47:41.000.912,C:\Users\Administrador\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\projeto\Projeto.dproj</Transaction>
+    <Transaction>2022/10/29 12:49:54.000.139,=C:\projeto\Controller\controleBase.pas</Transaction>
+    <Transaction>2022/10/29 13:07:45.000.509,=C:\projeto\Controller\controleCliente.pas</Transaction>
+    <Transaction>2022/10/29 13:08:02.000.368,=C:\projeto\Model\classeCliente.pas</Transaction>
+    <Transaction>2022/10/29 14:31:33.000.452,=C:\projeto\Unit1.pas</Transaction>
+    <Transaction>2022/10/29 14:39:52.000.377,C:\projeto\Unit1.dfm=C:\projeto\Controller\dataModule\uConexao.dfm</Transaction>
+    <Transaction>2022/10/29 14:39:52.000.377,C:\projeto\Unit1.pas=C:\projeto\Controller\dataModule\uConexao.pas</Transaction>
+    <Transaction>2022/10/30 16:17:05.000.070,=C:\projeto\Model\classeProduto.pas</Transaction>
+    <Transaction>2022/10/30 16:21:27.000.422,=C:\projeto\Model\classePedido.pas</Transaction>
+    <Transaction>2022/10/30 16:25:54.000.274,=C:\projeto\Model\classePedidoItem.pas</Transaction>
+    <Transaction>2022/10/30 16:27:13.000.942,C:\projeto\Model\classePedidoItem.pas=</Transaction>
+    <Transaction>2022/10/30 16:30:38.000.155,=C:\projeto\Model\classePedidoProduto.pas</Transaction>
+    <Transaction>2022/10/30 17:22:30.000.427,=C:\projeto\Controller\controleProduto.pas</Transaction>
+    <Transaction>2022/10/30 17:49:35.000.127,=C:\projeto\Controller\controlePedidoProduto.pas</Transaction>
+    <Transaction>2022/10/30 20:26:21.000.931,=C:\projeto\Controller\controlePedido.pas</Transaction>
+    <Transaction>2022/10/31 11:23:59.000.496,=C:\projeto\Unit1.pas</Transaction>
+    <Transaction>2022/10/31 11:26:15.000.325,C:\projeto\View\uPedidoProduto.dfm=C:\projeto\Unit1.dfm</Transaction>
+    <Transaction>2022/10/31 11:26:15.000.325,C:\projeto\View\uPedidoProduto.pas=C:\projeto\Unit1.pas</Transaction>
+    <Transaction>2022/10/31 11:28:42.000.891,C:\projeto\View\uPedido.pas=C:\projeto\uPrincipal.pas</Transaction>
+    <Transaction>2022/10/31 11:28:42.000.891,C:\projeto\View\uPedido.dfm=C:\projeto\uPrincipal.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

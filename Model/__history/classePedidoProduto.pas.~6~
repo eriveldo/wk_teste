@@ -1,0 +1,61 @@
+unit classePedidoProduto;
+
+interface
+
+uses
+  Classes, Dialogs;
+
+type
+  TPedidoProduto = class
+  private
+    // atributos da classe
+    FId: integer;
+    FNumeroPedido: integer;
+    FCodigoProduto: integer;
+    FQuantidade: double;
+    FValorUnitario: double;
+    FValorTotal: double;
+  public
+    // métodos públicos da classe
+    constructor Create;
+    destructor Destroy; override;
+    class function New : TPedidoProduto;
+
+    // propriedades da classe
+    property Id: integer read FId write FId;
+    property NumeroPedido: integer read FNumeroPedido write FNumeroPedido;
+    property CodigoProduto: integer read FCodigoProduto write FCodigoProduto;
+    property Quantidade: double read FQuantidade write FQuantidade;
+    property ValorUnitario: double read FValorUnitario write FValorUnitario;
+    property ValorTotal: double read FValorTotal write FValorTotal;
+  end;
+
+implementation
+
+uses
+  SysUtils;
+
+{ TPedidoProduto }
+
+constructor TPedidoProduto.Create;
+begin
+  // inicialização dos valores do objeto
+  FId := 0;
+  FNumeroPedido := 0;
+  FCodigoProduto:= 0;
+  FQuantidade   := 0;
+  FValorUnitario:= 0;
+  FValorTotal   := 0;
+end;
+
+destructor TCliente.Destroy;
+begin
+  inherited;
+end;
+
+class function TCliente.New : TCliente;
+begin
+  Result := Self.Create;
+end;
+
+end.

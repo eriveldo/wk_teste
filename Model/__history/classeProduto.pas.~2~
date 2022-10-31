@@ -1,0 +1,52 @@
+unit classeProduto;
+
+interface
+
+uses
+  Classes, Dialogs;
+
+type
+  TCliente = class(TObject)
+  private
+    // atributos da classe
+    FId: integer;
+    FNome: string;
+    FCPF: string;
+  public
+    // métodos públicos da classe
+    constructor Create;
+    destructor Destroy; override;
+    class function New : TCliente;
+
+    // propriedades da classe
+    property Id: integer read FId write FId;
+    property Nome: string read FNome write FNome;
+    property CPF: string read FCPF write FCPF;
+  end;
+
+implementation
+
+uses
+  SysUtils;
+
+{ TCliente }
+
+constructor TCliente.Create;
+begin
+  // inicialização dos valores do objeto
+  FId := 0;
+  FNome   := '';
+  FCPF    := '';
+end;
+
+destructor TCliente.Destroy;
+begin
+  inherited;
+end;
+
+class function TCliente.New : TCliente;
+begin
+  Result := Self.Create;
+end;
+
+end.
