@@ -3,7 +3,7 @@ object formPedido: TformPedido
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'Venda'
+  Caption = 'Pedido'
   ClientHeight = 473
   ClientWidth = 668
   Color = clBtnFace

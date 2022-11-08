@@ -60,6 +60,8 @@ type
     function ValidaDelete (const objetoPedido : TPedido) : boolean;
     // Procedumento para verificar se existe o numero do pedido
     function ExistNumeroPedido(const numero_pedido : integer) : boolean;
+    // Procedimento para gerar um novo número para o pedido
+    function GerarNumeroPedido : integer;
     // Funções auxiliares para controle de inserção em tabelas relacionadas
     function InNot(const objetoPedido : TPedido):String;
     function DeleteItens(const objetoPedido: TPedido): Boolean;
@@ -426,6 +428,36 @@ begin
               Result := false;
           End;
       end;
+  finally
+    if Assigned(Qry) then
+       FreeAndNil(Qry);
+  end;
+end;
+
+function TControlePedido.GerarNumeroPedido: integer;
+var
+  Qry:TFDQuery;
+begin
+  Result:=0;
+  try
+
+    Qry:=TFDQuery.Create(nil);
+    Qry.Connection:=ConexaoDB;
+    Qry.SQL.Clear;
+    Qry.SQL.Add('SELECT numero_pedido ultimo '+
+                'FROM pedido '+
+                'ORDER BY numero_pedido DESC LIMIT 1');
+    Try
+      Qry.Open;
+      if (Qry.RecordCount > 0 ) then
+          result := Qry.FieldByName('ultimo').AsInteger+1
+      else
+          result := 1;
+
+    Except
+      Result:=0;
+    End;
+
   finally
     if Assigned(Qry) then
        FreeAndNil(Qry);

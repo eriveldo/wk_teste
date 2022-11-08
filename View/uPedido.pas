@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   controlePedido, classePedido, classeProduto, controleCliente, classeCliente, classePedidoProduto, uConexao,
-  Vcl.Grids, Vcl.Mask, Vcl.ExtCtrls;
+  Vcl.Grids, Vcl.Mask, Vcl.ExtCtrls, inifiles;
 
 type
   TformPedido = class(TForm)
@@ -55,11 +55,13 @@ type
     controleCliente : TControleCliente;
     objetoCliente : TCliente;
     objetoProduto : TProduto;
+    arquivoConfig : TIniFile;
     function DataOk ( sData : string ) : boolean;
     function ValorOk (sValor : string) : boolean;
     procedure limpaCampos;
     procedure limpaObjetos;
     procedure dadosGrid;
+    function pastaSis : string; //recupera pasta do sistema
   public
     { Public declarations }
   end;
@@ -360,7 +362,7 @@ end;
 
 procedure TformPedido.limpaCampos;
 begin
-  edt_numero_pedido.text := '';
+  edt_numero_pedido.text := formatfloat('00000000',controlePedido.GerarNumeroPedido);
   msk_data_emissao.text := '';
   edt_codigo_cliente.text := '';
   sta_cliente_nome.Caption := '';
@@ -408,6 +410,11 @@ begin
   end;
 end;
 
+function TformPedido.pastaSis : string;
+begin
+  result := extractfilepath(application.exename);
+end;
+
 function TformPedido.ValorOk(sValor: string): boolean;
 var
   testeValor : double;
@@ -424,25 +431,153 @@ begin
 end;
 
 procedure TformPedido.FormCreate(Sender: TObject);
+var
+  fDriverId, fServer, fPort, fUseSSL, fDatabase, fUser_name, fPassword : string;
 begin
-  dmConexao.conexao.Connected := false;
-  dmConexao.conexao.Params.Clear;
-  dmConexao.conexao.Params.Add('DriverID=Mysql');
-  dmConexao.conexao.Params.Add('Server=localhost');
-  dmConexao.conexao.Params.Add('Port=3306');
-  dmConexao.conexao.Params.Add('UseSSL=True');
-  dmConexao.conexao.Params.Add('Database=venda');
-  dmConexao.conexao.Params.Add('User_name=root');
-  dmConexao.conexao.Params.Add('Password=1234');
+
+  //Verifica se existe arquivo de configuração do sistema e pergunta se quer resetar
+
+  //Caso não exista solicita ao usuário o cadastro das informações
+  arquivoConfig := TIniFile.Create(pastaSis+'\config.ini');
+  if (fileexists(pastaSis+'\config.ini')) then
+  begin
+    with arquivoConfig do
+    begin
+        //Verifica campo DriverID do arquivo .ini
+        fDriverid := ReadString('CONFIG','DriverID','');
+        while (fDriverId = '') do
+        begin
+          fDriverID := InputBox('Configuração: DriverID','DriverID: ','MySQL');
+          WriteString('CONFIG','DriverID',fDriverID);
+        end;
+        //Verifica campo Server do arquivo .ini
+        fServer := ReadString('CONFIG','Server','');
+        while (fServer = '') do
+        begin
+          fServer := InputBox('Configuração: Server','Server: ','localhost');
+          WriteString('CONFIG','Server',fServer);
+        end;
+        //Vericia campo Port do arquivo .ini
+        fPort := ReadString('CONFIG','Port','');
+        while (fPort = '') do
+        begin
+          fPort := InputBox('Configuração: Port','Port: ','3306');
+          WriteString('CONFIG','Port',fPort);
+        end;
+        //Verifica campo UseSSL do arquivo .ini
+        fUseSSL := ReadString('CONFIG','UseSSL','');
+        while (fUseSSL = '') do
+        begin
+          fUseSSL := InputBox('Configuração: UseSSL','UseSSL: ','True');
+          WriteString('CONFIG','UseSSL',fUseSSL);
+        end;
+        //Verifica campo Database do arquivo .ini
+        fDatabase := ReadString('CONFIG','Database','');
+        while (fDatabase = '') do
+        begin
+          fDatabase := InputBox('Configuração: Database','Database: ','venda');
+          WriteString('CONFIG','Database',fDatabase);
+        end;
+        //Verifica campo User_name do arquivo .ini
+        fUser_name := ReadString('CONFIG','User_name','');
+        while (fUser_name = '') do
+        begin
+          fUser_name := InputBox('Configuração: User_name','User_name: ','root');
+          WriteString('CONFIG','User_name',fUser_name);
+        end;
+        //Verifica campo Password do arquivo .ini
+        fPassword := ReadString('CONFIG','Password','');
+        while (fPassword = '') do
+        begin
+          fPassword := InputBox('Configuração: Password','Password: ','1234');
+          WriteString('CONFIG','Password',fPassword);
+        end;
+    end;
+  end else
+  begin
+    with arquivoConfig do
+    begin
+
+      //Verifica campo DriverID do arquivo .ini
+      fDriverid := ReadString('CONFIG','DriverID','');
+      while (fDriverId = '') do
+      begin
+        fDriverID := InputBox('Configuração: DriverID','DriverID: ','MySQL');
+        WriteString('CONFIG','DriverID',fDriverID);
+      end;
+      //Verifica campo Server do arquivo .ini
+      fServer := ReadString('CONFIG','Server','');
+      while (fServer = '') do
+      begin
+        fServer := InputBox('Configuração: Server','Server: ','localhost');
+        WriteString('CONFIG','Server',fServer);
+      end;
+      //Vericia campo Port do arquivo .ini
+      fPort := ReadString('CONFIG','Port','');
+      while (fPort = '') do
+      begin
+        fPort := InputBox('Configuração: Port','Port: ','3306');
+        WriteString('CONFIG','Port',fPort);
+      end;
+      //Verifica campo UseSSL do arquivo .ini
+      fUseSSL := ReadString('CONFIG','UseSSL','');
+      while (fUseSSL = '') do
+      begin
+        fUseSSL := InputBox('Configuração: UseSSL','UseSSL: ','True');
+        WriteString('CONFIG','UseSSL',fUseSSL);
+      end;
+      //Verifica campo Database do arquivo .ini
+      fDatabase := ReadString('CONFIG','Database','');
+      while (fDatabase = '') do
+      begin
+        fDatabase := InputBox('Configuração: Database','Database: ','venda');
+        WriteString('CONFIG','Database',fDatabase);
+      end;
+      //Verifica campo User_name do arquivo .ini
+      fUser_name := ReadString('CONFIG','User_name','');
+      while (fUser_name = '') do
+      begin
+        fUser_name := InputBox('Configuração: User_name','User_name: ','root');
+        WriteString('CONFIG','User_name',fUser_name);
+      end;
+      //Verifica campo Password do arquivo .ini
+      fPassword := ReadString('CONFIG','Password','');
+      while (fPassword = '') do
+      begin
+        fPassword := InputBox('Configuração: Password','Password: ','1234');
+        WriteString('CONFIG','Password',fPassword);
+      end;
+
+    end;
+  end;
+
+  arquivoConfig.Free;
   try
-    dmConexao.conexao.Connected := true;
+    with dmConexao.conexao do
+    begin
+      Params.clear;
+      Params.Add('DriverID='+fDriverId);
+      Params.Add('Server='+fServer);
+      Params.Add('Port='+fPort);
+      Params.Add('UseSSL='+fUseSSL);
+      Params.Add('Database='+fDatabase);
+      Params.Add('User_name='+fUser_name);
+      Params.Add('Password='+fPassword);
+      Connected := true;
+    end;
   except
+    //Exceção de erro na configuração do sistema
     application.MessageBox('Erro de conexão com o banco de dados','Erro ao conectar',Mb_Ok+MB_ICONWARNING);
+    //Reseta as configurações do sistema
+    if application.MessageBox('Resetar as configurações do sistema?','AVISO',Mb_YesNo+MB_ICONEXCLAMATION) = mrYes then
+    begin
+        deletefile(pastaSis+'\config.ini');
+    end;
     application.Terminate;
   end;
 
-  limpaCampos;
   limpaObjetos;
+  limpaCampos;
 end;
 
 procedure TformPedido.gri_produtosKeyUp(Sender: TObject; var Key: Word;
