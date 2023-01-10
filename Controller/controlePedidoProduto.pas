@@ -353,7 +353,7 @@ begin
     raise Exception.Create('Código do produto não pode ficar em branco.');
 
   if objetoPedidoProduto.Quantidade <= 0 then
-    raise Exception.Create('Quantidade inválida.');
+    raise Exception.Create('Quantidade não pode ser menor do que 1.');
 
   if objetoPedidoProduto.ValorUnitario <= 0 then
     raise Exception.Create('Valor unitario do produto inválido.');

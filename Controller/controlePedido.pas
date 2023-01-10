@@ -94,7 +94,11 @@ begin
   objetoControlePedidoProduto := TControlePedidoProduto.Create(ConexaoDB);
   objetoPedidoProduto := TPedidoProduto.New;
 
-  if ValidaInsert(objetoPedido) = false then Abort;
+  if ValidaInsert(objetoPedido) = false then
+  begin
+    objetoPedido.NumeroPedido := 0;
+    Abort;
+  end;
 
   try
       ConexaoDB.StartTransaction;
@@ -102,26 +106,23 @@ begin
       Qry.Connection:= ConexaoDB;
       Qry.SQL.Clear;
       Qry.SQL.Add('INSERT INTO pedido ('+
+                  ' numero_pedido, '+
                   ' data_emissao, '+
                   ' codigo_cliente, '+
                   ' valor_total '+
                   ') VALUES ('+
+                  ' :numero_pedido, '+
                   ' :data_emissao, '+
                   ' :codigo_cliente, '+
                   ' :valor_total '+
                   ')' );
+      Qry.ParamByName('numero_pedido').AsInteger := objetoPedido.NumeroPedido;
       Qry.ParamByName('data_emissao').AsDate := objetoPedido.DataEmissao;
       Qry.ParamByName('codigo_cliente').AsInteger := objetoPedido.CodigoCliente;
       Qry.ParamByName('valor_total').AsFloat := objetoPedido.ValorTotal;
 
       Try
           Qry.ExecSQL;
-          ConexaoDB.Commit;
-          //Recupera o ID Gerado no Insert
-          Qry.SQL.Clear;
-          Qry.SQL.Add('SELECT LAST_INSERT_ID() AS ID');
-          Qry.Open;
-          objetoPedido.NumeroPedido := Qry.FieldByName('id').AsInteger;
 
           //Inserindo os produtos do pedido
           for I := 0 to objetoPedido.Produtos.Count -1 do
@@ -131,10 +132,12 @@ begin
             objetoControlePedidoProduto.Insert(objetoPedidoProduto);
           end;
 
+          ConexaoDB.Commit;
           result := objetoPedido;
       Except
           ConexaoDB.Rollback;
           Result:=TPedido.New;
+          raise Exception.Create('Erro ao salvar os dados.');
       End;
   finally
     if Assigned(Qry) then
@@ -197,6 +200,7 @@ begin
         Except
           ConexaoDB.Rollback;
           Result:=false;
+          raise Exception.Create('Erro ao salvar os dados.');
         End;
 	  end;
   finally
@@ -338,12 +342,26 @@ end;
 function TControlePedido.ValidaInsert(const objetoPedido: TPedido): boolean;
 begin
   result := false;
+  if objetoPedido.NumeroPedido <= 0 then
+    raise Exception.Create('Número do pedido inválido.');
+
   if objetoPedido.DataEmissao <= 0 then
+  begin
+    objetoPedido.NumeroPedido := 0;
     raise Exception.Create('Data da emissão inválida.');
+  end;
 
   if objetoPedido.CodigoCliente <= 0 then
+  begin
+    objetoPedido.NumeroPedido := 0;
     raise Exception.Create('Código do cliente inválido.');
+  end;
 
+  if objetoPedido.Produtos.Count <= 0 then
+  begin
+    objetoPedido.NumeroPedido := 0;
+    raise Exception.Create('Pedido sem itens cadastrados.');
+  end;
   result := true;
 end;
 
@@ -367,6 +385,9 @@ begin
 
   if objetoPedido.CodigoCliente <= 0 then
     raise Exception.Create('Código do cliente inválido.');
+
+  if objetoPedido.Produtos.Count <= 0 then
+    raise Exception.Create('Pedido sem itens cadastrados.');
 
   result := true;
 end;

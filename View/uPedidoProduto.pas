@@ -38,7 +38,7 @@ type
     objetoProduto : TProduto;
     controleProduto: TControleProduto;
     controlePedidoProduto : TControlePedidoProduto;
-    function ValorOk(sValor: string): boolean;
+    function ValorOk(sValor, sCampo: string): boolean;
   public
     objetoPedidoProduto : TPedidoProduto;
   end;
@@ -67,7 +67,7 @@ begin
   sValorUnitario := edt_valor_unitario.Text;
   sValorUnitario := Trim(sValorUnitario);
   //Verifica se o codigo do produto está correto
-  if ValorOk(sCodigo) then
+  if ValorOk(sCodigo,'Código do produto') then
   begin
     objetoProduto.Codigo := StrToInt(sCodigo);
     objetoProduto := controleProduto.Select(objetoProduto);
@@ -80,12 +80,12 @@ begin
     end;
   end;
   //Verifica se a quantidade está correta
-  if ValorOk(sQuantidade) then
+  if ValorOk(sQuantidade,'Quantidade') then
     objetoPedidoProduto.Quantidade := StrToFloat(sQuantidade)
   else
     Abort;
   //Verifica se o valor unitario esta correto
-  if ValorOk(sQuantidade) then
+  if ValorOk(sQuantidade,'Quantidade') then
     objetoPedidoProduto.ValorUnitario := StrToFloat(sValorUnitario)
   else
     Abort;
@@ -104,7 +104,7 @@ begin
   sCodigo := Trim(sCodigo);
   if sCodigo <> '' then
   begin
-    if ValorOk(sCodigo) then
+    if ValorOk(sCodigo,'Código do produto') then
     begin
       objetoProduto.Codigo := StrToInt(sCodigo);
       objetoProduto := controleProduto.Select(objetoProduto);
@@ -135,7 +135,7 @@ end;
 procedure TformPedidoProduto.edt_quantidadeExit(Sender: TObject);
 begin
   try
-      if valorok(edt_quantidade.text) then
+      if valorok(edt_quantidade.text,'Quantidade') then
       begin
           objetoPedidoProduto.Quantidade := StrToFloat(edt_quantidade.text);
           edt_valor_total.text := formatfloat('0.00',objetoPedidoProduto.ValorTotal);
@@ -169,7 +169,7 @@ end;
 procedure TformPedidoProduto.edt_valor_unitarioExit(Sender: TObject);
 begin
   try
-      if valorok(edt_valor_unitario.text) then
+      if valorok(edt_valor_unitario.text,'Valor unitário') then
       begin
           objetoPedidoProduto.ValorUnitario := StrToFloat(edt_valor_unitario.text);
           edt_valor_total.text := formatfloat('0.00',objetoPedidoProduto.ValorTotal);
@@ -199,7 +199,11 @@ end;
 
 procedure TformPedidoProduto.FormShow(Sender: TObject);
 begin
-  edt_codigo_produto.SetFocus;
+  try
+    edt_codigo_produto.SetFocus;
+  except
+    edt_quantidade.SetFocus;
+  end;
 end;
 
 procedure TformPedidoProduto.msk_quantidadeExit(Sender: TObject);
@@ -208,7 +212,7 @@ var
 begin
   sQuantidade := edt_quantidade.text;
   sQuantidade := trim(sQuantidade);
-  if ValorOk(sQuantidade) then
+  if ValorOk(sQuantidade,'Quantidade') then
     objetoPedidoProduto.Quantidade := StrToFloat(sQuantidade)
   else
   begin
@@ -219,7 +223,7 @@ begin
 
 end;
 
-function TformPedidoProduto.ValorOk(sValor: string): boolean;
+function TformPedidoProduto.ValorOk(sValor, sCampo: string): boolean;
 var
   testeValor : double;
 begin
@@ -229,7 +233,7 @@ begin
     result := true;
   except
     result := false;
-    raise Exception.Create('Valor inválido.');
+    raise Exception.Create(sCampo+' inválido(a).');
   end;
 
 end;

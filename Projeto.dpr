@@ -13,7 +13,8 @@ uses
   controleProduto in 'Controller\controleProduto.pas',
   controlePedidoProduto in 'Controller\controlePedidoProduto.pas',
   controlePedido in 'Controller\controlePedido.pas',
-  uPedidoProduto in 'View\uPedidoProduto.pas' {formPedidoProduto};
+  uPedidoProduto in 'View\uPedidoProduto.pas' {formPedidoProduto},
+  uInformePedido in 'View\uInformePedido.pas' {formInformePedido};
 
 {$R *.res}
 
@@ -23,5 +24,6 @@ begin
   Application.CreateForm(TdmConexao, dmConexao);
   Application.CreateForm(TformPedido, formPedido);
   Application.CreateForm(TformPedidoProduto, formPedidoProduto);
+  Application.CreateForm(TformInformePedido, formInformePedido);
   Application.Run;
 end.

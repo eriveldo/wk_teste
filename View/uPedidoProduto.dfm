@@ -18,7 +18,7 @@ object formPedidoProduto: TformPedidoProduto
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 16
+  TextHeight = 15
   object pan_produto: TPanel
     Left = 0
     Top = 0
@@ -29,8 +29,8 @@ object formPedidoProduto: TformPedidoProduto
     object Label5: TLabel
       Left = 9
       Top = 7
-      Width = 103
-      Height = 15
+      Width = 102
+      Height = 14
       Caption = 'C'#243'digo do produto'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -40,10 +40,10 @@ object formPedidoProduto: TformPedidoProduto
       ParentFont = False
     end
     object Label6: TLabel
-      Left = 41
+      Left = 45
       Top = 53
-      Width = 65
-      Height = 15
+      Width = 61
+      Height = 14
       Alignment = taRightJustify
       Caption = 'Quantidade'
       Font.Charset = DEFAULT_CHARSET
@@ -54,10 +54,10 @@ object formPedidoProduto: TformPedidoProduto
       ParentFont = False
     end
     object Label7: TLabel
-      Left = 134
+      Left = 137
       Top = 53
-      Width = 76
-      Height = 15
+      Width = 73
+      Height = 14
       Alignment = taRightJustify
       Caption = 'Valor Unit'#225'rio'
       Font.Charset = DEFAULT_CHARSET
@@ -68,10 +68,10 @@ object formPedidoProduto: TformPedidoProduto
       ParentFont = False
     end
     object Label8: TLabel
-      Left = 255
+      Left = 256
       Top = 53
-      Width = 59
-      Height = 15
+      Width = 58
+      Height = 14
       Alignment = taRightJustify
       Caption = 'Valor Total'
       Font.Charset = DEFAULT_CHARSET
@@ -83,7 +83,7 @@ object formPedidoProduto: TformPedidoProduto
     end
     object sta_produto_nome: TStaticText
       Left = 113
-      Top = 24
+      Top = 25
       Width = 426
       Height = 22
       AutoSize = False
@@ -113,7 +113,7 @@ object formPedidoProduto: TformPedidoProduto
       Left = 10
       Top = 69
       Width = 97
-      Height = 24
+      Height = 23
       Alignment = taRightJustify
       TabOrder = 1
       OnExit = edt_quantidadeExit
@@ -124,7 +124,7 @@ object formPedidoProduto: TformPedidoProduto
       Left = 10
       Top = 24
       Width = 97
-      Height = 24
+      Height = 23
       Alignment = taRightJustify
       TabOrder = 0
       OnExit = edt_codigo_produtoExit
@@ -134,7 +134,7 @@ object formPedidoProduto: TformPedidoProduto
       Left = 113
       Top = 69
       Width = 97
-      Height = 24
+      Height = 23
       Alignment = taRightJustify
       TabOrder = 3
       OnExit = edt_valor_unitarioExit
@@ -144,7 +144,7 @@ object formPedidoProduto: TformPedidoProduto
       Left = 217
       Top = 69
       Width = 97
-      Height = 24
+      Height = 23
       Alignment = taRightJustify
       ReadOnly = True
       TabOrder = 6

@@ -112,6 +112,7 @@ object formPedido: TformPedido
         DefaultColWidth = 60
         RowCount = 2
         TabOrder = 0
+        OnKeyPress = gri_produtosKeyPress
         OnKeyUp = gri_produtosKeyUp
         ColWidths = (
           60
@@ -240,7 +241,9 @@ object formPedido: TformPedido
       Width = 97
       Height = 24
       Alignment = taRightJustify
+      ReadOnly = True
       TabOrder = 0
+      OnExit = edt_numero_pedidoExit
       OnKeyPress = edt_numero_pedidoKeyPress
     end
     object btnCancelarPedido: TButton

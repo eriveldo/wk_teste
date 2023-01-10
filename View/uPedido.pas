@@ -49,15 +49,18 @@ type
     procedure edt_codigo_clienteKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure btnCancelarPedidoClick(Sender: TObject);
+    procedure edt_numero_pedidoExit(Sender: TObject);
+    procedure gri_produtosKeyPress(Sender: TObject; var Key: Char);
   private
     objetoPedido : TPedido;
     controlePedido : TControlePedido;
     controleCliente : TControleCliente;
+    NovoID : integer;
     objetoCliente : TCliente;
     objetoProduto : TProduto;
     arquivoConfig : TIniFile;
     function DataOk ( sData : string ) : boolean;
-    function ValorOk (sValor : string) : boolean;
+    function ValorOk (sValor, sCampo : string) : boolean;
     procedure limpaCampos;
     procedure limpaObjetos;
     procedure dadosGrid;
@@ -73,23 +76,37 @@ implementation
 
 {$R *.dfm}
 
-uses uPedidoProduto;
+uses uPedidoProduto, uInformePedido;
 procedure TformPedido.btnAbrirPedidoClick(Sender: TObject);
 var
-  sNumeroPedido : string;
-  i : integer;
+  strNumeroPedido : string;
 begin
-  sNumeroPedido := InputBox('Abrir pedido cadastrado','Número do pedido: ','0');
-  sNumeroPedido := Trim(sNumeroPedido);
-  if ValorOk(sNumeroPedido) then
+  try
+    with formInformePedido do
+    begin
+      formInformePedido:= TformInformePedido.Create(Self);
+      Caption := 'Abrir Pedido';
+      ShowModal;
+      if ModalResult = mrOk then
+      begin
+          strNumeroPedido := edt_numero_pedido.text;
+      end;
+    end;
+  finally
+    if Assigned(formInformePedido) then
+       formInformePedido.Destroy;
+  end;  
+  if strNumeroPedido = '' then
+    Abort;
+  if ValorOk(strNumeroPedido,'Número do pedido') then
   begin
-      objetoPedido.NumeroPedido := StrToInt(sNumeroPedido);
+      objetoPedido.NumeroPedido := StrToInt(strNumeroPedido);
       //Define o número do pedido e tenta carregar os dados
       objetoPedido := controlePedido.Select(objetoPedido);
       if objetoPedido.NumeroPedido > 0  then
       begin
           limpaCampos;
-          edt_numero_pedido.text := IntToStr(objetoPedido.NumeroPedido);
+          edt_numero_pedido.text := formatfloat('000000000',objetoPedido.NumeroPedido);
           msk_data_emissao.text := FormatDateTime('dd/mm/yyyy',objetoPedido.DataEmissao);
           edt_codigo_cliente.text := IntToStr(objetoPedido.CodigoCliente);
           sta_cliente_nome.Caption := objetoPedido.Cliente.Nome;
@@ -153,6 +170,7 @@ begin
       formPedidoProduto:= TformPedidoProduto.Create(Self);
       formPedidoProduto.objetoPedidoProduto := objetoPedido.Produtos.Items[item];
       edt_codigo_produto.text := formatfloat('000000000',objetoPedidoProduto.CodigoProduto);
+      edt_codigo_produto.Enabled := false;
       sta_produto_nome.Caption := objetoPedidoProduto.Produto.Descricao;
       edt_quantidade.Text := formatfloat('0.00',objetoPedidoProduto.Quantidade);
       edt_valor_unitario.Text := formatfloat('0.00',objetoPedidoProduto.ValorUnitario);
@@ -172,14 +190,28 @@ end;
 
 procedure TformPedido.btnCancelarPedidoClick(Sender: TObject);
 var
-  sNumeroPedido : string;
-  i : integer;
+  strNumeroPedido : string;
 begin
-  sNumeroPedido := InputBox('Abrir pedido cadastrado','Número do pedido: ','0');
-  sNumeroPedido := Trim(sNumeroPedido);
-  if ValorOk(sNumeroPedido) then
+  try
+    with formInformePedido do
+    begin
+      formInformePedido:= TformInformePedido.Create(Self);
+      Caption := 'Cancelar Pedido';
+      ShowModal;
+      if ModalResult = mrOk then
+      begin
+          strNumeroPedido := edt_numero_pedido.text;
+      end;
+    end;
+  finally
+    if Assigned(formInformePedido) then
+       formInformePedido.Destroy;
+  end;  
+  if strNumeroPedido = '' then
+    Abort;
+  if ValorOk(strNumeroPedido,'Número do pedido') then
   begin
-      objetoPedido.NumeroPedido := StrToInt(sNumeroPedido);
+      objetoPedido.NumeroPedido := StrToInt(strNumeroPedido);
       //Define o número do pedido e tenta carregar os dados
       objetoPedido := controlePedido.Select(objetoPedido);
       if objetoPedido.NumeroPedido > 0  then
@@ -187,18 +219,20 @@ begin
         if Application.MessageBox(pchar('Confirma o cancelamento do pedido: '+FormatFloat('000000000',objetoPedido.NumeroPedido)+' ?'),'AVISO',Mb_YesNo+Mb_IconExclamation) = mrNo then Abort;
         controlePedido.Delete(objetoPedido);
         application.MessageBox('Pedido cancelado com sucesso','AVISO',Mb_OK+MB_ICONINFORMATION);
+        limpaObjetos;
       end else
       begin
         application.MessageBox('Pedido não encontrado','AVISO',Mb_OK+MB_ICONEXCLAMATION);
-        limpaCampos;
-        limpaObjetos;
       end;
   end;
-
+  limpaCampos;
+  limpaObjetos;
 end;
 
 procedure TformPedido.btnLimparClick(Sender: TObject);
 begin
+  btnAbrirPedido.Visible := true;
+  btnCancelarPedido.Visible := true;
   limpaCampos;
   limpaObjetos;
   edt_numero_pedido.SetFocus;
@@ -225,35 +259,35 @@ end;
 
 procedure TformPedido.btnSalvarClick(Sender: TObject);
 begin
-  //Verifica se esta alterando um pedido(numero_pedido preenchido e valido) ou salvando um novo (numero_pedido vazio)
-  if edt_numero_pedido.text = '' then
-  begin
-      objetoPedido := controlePedido.Insert(objetoPedido);
-      if objetoPedido.NumeroPedido > 0 then
-      begin
-        application.MessageBox(Pchar('Pedido nr: '+formatfloat('000000000',objetoPedido.NumeroPedido)+' salvo com sucesso!'),'AVISO',Mb_Ok+MB_ICONINFORMATION);
-      end;
-      limpaCampos;
-      limpaObjetos;
-      edt_numero_pedido.SetFocus;
-      btnAbrirPedido.Visible := true;
-      btnCancelarPedido.Visible := true;
-  end else
-  begin
-    if controlePedido.ExistNumeroPedido(StrToInt(edt_numero_pedido.text)) = false then
+  //Verifica se esta alterando um pedido(numero_pedido encontrado no banco) ou salvando um novo 
+    if (objetoPedido.NumeroPedido = 0) then
     begin
-        application.MessageBox(Pchar('Pedido nr: '+formatfloat('000000000',StrtoInt(edt_numero_pedido.text))+' não encontrado!'),'AVISO',Mb_Ok+MB_ICONEXCLAMATION);
-        abort;
-    end;
-      if controlePedido.Update(objetoPedido) then
-      begin
-        application.MessageBox(Pchar('Pedido nr: '+formatfloat('000000000',objetoPedido.NumeroPedido)+' atualizado com sucesso!'),'AVISO',Mb_Ok+MB_ICONINFORMATION);
+        if StrToInt(edt_numero_pedido.Text) <> NovoID then
+        begin
+          raise Exception.Create('Número do pedido fora de sequencia');
+        end;
+        objetoPedido.NumeroPedido := NovoID;
+        objetoPedido := controlePedido.Insert(objetoPedido);
+        if objetoPedido.NumeroPedido > 0 then
+        begin
+          application.MessageBox(Pchar('Pedido nr: '+formatfloat('000000000',objetoPedido.NumeroPedido)+' salvo com sucesso!'),'AVISO',Mb_Ok+MB_ICONINFORMATION);
+        end;
         limpaCampos;
         limpaObjetos;
         edt_numero_pedido.SetFocus;
         btnAbrirPedido.Visible := true;
-        btnCancelarPedido.Visible := true;
-      end;
+        btnCancelarPedido.Visible := true;    
+    end else
+    begin
+        if controlePedido.Update(objetoPedido) then
+        begin
+          application.MessageBox(Pchar('Pedido nr: '+formatfloat('000000000',objetoPedido.NumeroPedido)+' atualizado com sucesso!'),'AVISO',Mb_Ok+MB_ICONINFORMATION);
+          limpaCampos;
+          limpaObjetos;
+          edt_numero_pedido.SetFocus;
+          btnAbrirPedido.Visible := true;
+          btnCancelarPedido.Visible := true;
+        end;
   end;
 end;
 
@@ -304,7 +338,7 @@ begin
   sCodigo := Trim(sCodigo);
   if sCodigo <> '' then
   begin
-      if ValorOk(sCodigo) then
+      if ValorOk(sCodigo,'Número do pedido') then
       begin
           objetoCliente.Codigo := StrToInt(sCodigo);
           try
@@ -355,6 +389,19 @@ begin
   end;
 end;
 
+procedure TformPedido.edt_numero_pedidoExit(Sender: TObject);
+var
+  i : integer;
+begin
+  try
+    i := StrToInt(edt_numero_pedido.text);
+  except
+    Application.MessageBox('Número do pedido inválido','ERRO',Mb_Ok+Mb_IconExclamation);
+    i := NovoID;
+  end;
+  edt_numero_pedido.text := formatfloat('00000000',i);  
+end;
+
 procedure TformPedido.edt_numero_pedidoKeyPress(Sender: TObject; var Key: Char);
 begin
   if (not (Key in ['0'..'9', #8, #9])) then Key := #0;
@@ -362,7 +409,9 @@ end;
 
 procedure TformPedido.limpaCampos;
 begin
-  edt_numero_pedido.text := formatfloat('00000000',controlePedido.GerarNumeroPedido);
+  NovoID := controlePedido.GerarNumeroPedido;
+  edt_numero_pedido.text := formatfloat('00000000',NovoID);
+  
   msk_data_emissao.text := '';
   edt_codigo_cliente.text := '';
   sta_cliente_nome.Caption := '';
@@ -415,7 +464,7 @@ begin
   result := extractfilepath(application.exename);
 end;
 
-function TformPedido.ValorOk(sValor: string): boolean;
+function TformPedido.ValorOk(sValor, sCampo: string): boolean;
 var
   testeValor : double;
 begin
@@ -425,7 +474,7 @@ begin
     result := true;
   except
     result := false;
-    raise Exception.Create('Valor inválido.');
+    raise Exception.Create(sCampo + ' inválido(a).');
   end;
 
 end;
@@ -580,15 +629,18 @@ begin
   limpaCampos;
 end;
 
+procedure TformPedido.gri_produtosKeyPress(Sender: TObject; var Key: Char);
+begin
+  if key = #13 then
+  begin
+    key := #0;
+    btnAtualizar.Click;    
+  end;
+end;
+
 procedure TformPedido.gri_produtosKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if key = vk_return then
-  begin
-    key := Ord(0);
-    btnAtualizar.Click;
-  end;
-
   if key = vk_delete then
   begin
     key := Ord(0);
